@@ -3,7 +3,7 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-
+.idea
 # Dependency directories
 ## Ignore packages directory, make sure you checkin project.json/paket.dependencies/paket.lock files instead
 [Pp]ackages/
