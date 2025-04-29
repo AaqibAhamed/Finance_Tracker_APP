@@ -4,17 +4,11 @@
     <projectFile profileName="http">FinanceTrackerAPI/FinanceTrackerAPI.csproj</projectFile>
     <projectFile profileName="https">FinanceTrackerAPI/FinanceTrackerAPI.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="42494dde-3289-4017-9d5e-85001a54a558" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTracker.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/FinanceTrackerAPI.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/FinanceTrackerAPI.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/FinanceTrackerAPI/appsettings.json" afterDir="false" />
-    </list>
+    <list default="true" id="42494dde-3289-4017-9d5e-85001a54a558" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +29,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "dev",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -80,7 +78,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1745892249526</updated>
-      <workItem from="1745892251360" duration="314000" />
+      <workItem from="1745892251360" duration="680000" />
     </task>
     <servers />
   </component>
@@ -88,6 +86,17 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
