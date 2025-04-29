@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinanceTrackerAPI.Models;
 
+//Expense Entity
 public class Expense
 {
     [Key]
