@@ -8,26 +8,43 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="42494dde-3289-4017-9d5e-85001a54a558" name="Changes" comment="" />
+    <list default="true" id="42494dde-3289-4017-9d5e-85001a54a558" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.FinanceTracker/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.FinanceTracker/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FinanceTracker.sln" beforeDir="false" afterPath="$PROJECT_DIR$/FinanceTracker.sln" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DpaMonitoringSettings">
+    <option name="autoShow" value="false" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Volumes/Documents/Career Docs/Inivos/Finance_Tracker/FinanceTracker/FinanceTrackerAPI/appsettings.json" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="SWEA" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 2
 }]]></component>
   <component name="ProjectId" id="2wNqC7KlwH9pG5LwGRoIjj5cXtN" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    ".NET Launch Settings Profile.FinanceTrackerAPI: http.executor": "Run",
+    ".NET Launch Settings Profile.FinanceTrackerAPI: https.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "dev",
     "node.js.detected.package.eslint": "true",
@@ -38,7 +55,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.FinanceTrackerAPI: https">
+  <component name="RunManager" selected=".NET Launch Settings Profile.FinanceTrackerAPI: http">
     <configuration name="FinanceTrackerAPI: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/FinanceTrackerAPI/FinanceTrackerAPI.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
@@ -78,13 +95,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1745892249526</updated>
-      <workItem from="1745892251360" duration="680000" />
+      <workItem from="1745892251360" duration="4230000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
