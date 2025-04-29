@@ -2,9 +2,10 @@ using FinanceTrackerAPI.Data;
 using FinanceTrackerAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FinanceTrackerAPI.DTOs; 
 
-namespace FinanceTrackerAPI.Controllers;
-
+namespace FinanceTrackerAPI.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase
@@ -18,7 +19,7 @@ namespace FinanceTrackerAPI.Controllers;
 
         // GET: api/Expenses
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = "Date", [FromQuery] string? sortDirection = "desc")
+        public async Task<ActionResult<IEnumerable<ExpenseResponseDto>>> GetExpenses([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = "Date", [FromQuery] string? sortDirection = "desc")
         {
             var query = _context.Expenses.AsQueryable();
 
@@ -42,6 +43,7 @@ namespace FinanceTrackerAPI.Controllers;
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Select(e => new ExpenseResponseDto(e.Id, e.Description, e.Amount, e.Date)) // Project to DTO
                 .ToListAsync();
 
             return Ok(new { Items = items, TotalCount = totalItems, PageNumber = pageNumber, PageSize = pageSize });
@@ -49,7 +51,7 @@ namespace FinanceTrackerAPI.Controllers;
 
         // GET: api/Expenses/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int id)
+        public async Task<ActionResult<ExpenseResponseDto>> GetExpense(int id)
         {
             var expense = await _context.Expenses.FindAsync(id);
 
@@ -58,39 +60,51 @@ namespace FinanceTrackerAPI.Controllers;
                 return NotFound();
             }
 
-            return expense;
+            var responseDto = new ExpenseResponseDto(expense.Id, expense.Description, expense.Amount, expense.Date);
+            return responseDto;
         }
 
         // POST: api/Expenses
         [HttpPost]
-        public async Task<ActionResult<Expense>> PostExpense(Expense expense)
+        public async Task<ActionResult<ExpenseResponseDto>> PostExpense(ExpenseDto expenseDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var expense = new Expense
+            {
+                Description = expenseDto.Description,
+                Amount = expenseDto.Amount,
+                Date = expenseDto.Date
+            };
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, expense);
+            var responseDto = new ExpenseResponseDto(expense.Id, expense.Description, expense.Amount, expense.Date);
+            return CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, responseDto);
         }
 
         // PUT: api/Expenses/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpense(int id, Expense expense)
+        public async Task<IActionResult> PutExpense(int id, ExpenseDto expenseDto)
         {
-            if (id != expense.Id)
-            {
-                return BadRequest();
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Entry(expense).State = EntityState.Modified;
+            var expense = await _context.Expenses.FindAsync(id);
+            if (expense == null)
+            {
+                return NotFound();
+            }
+
+            expense.Description = expenseDto.Description;
+            expense.Amount = expenseDto.Amount;
+            expense.Date = expenseDto.Date;
 
             try
             {
@@ -132,3 +146,4 @@ namespace FinanceTrackerAPI.Controllers;
             return _context.Expenses.Any(e => e.Id == id);
         }
     }
+}
