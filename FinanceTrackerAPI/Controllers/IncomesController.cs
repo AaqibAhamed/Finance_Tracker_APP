@@ -2,9 +2,10 @@ using FinanceTrackerAPI.Data;
 using FinanceTrackerAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FinanceTrackerAPI.DTOs; // Add this using statement
 
-namespace FinanceTrackerAPI.Controllers;
-
+namespace FinanceTrackerAPI.Controllers
+{
     [ApiController]
     [Route("api/[controller]")]
     public class IncomesController : ControllerBase
@@ -18,7 +19,7 @@ namespace FinanceTrackerAPI.Controllers;
 
         // GET: api/Incomes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Income>>> GetIncomes([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = "Date", [FromQuery] string? sortDirection = "desc")
+        public async Task<ActionResult<IEnumerable<IncomeResponseDto>>> GetIncomes([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = "Date", [FromQuery] string? sortDirection = "desc")
         {
             var query = _context.Incomes.AsQueryable();
 
@@ -42,6 +43,7 @@ namespace FinanceTrackerAPI.Controllers;
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .Select(i => new IncomeResponseDto(i.Id, i.Description, i.Amount, i.Date)) // Project to DTO
                 .ToListAsync();
 
             return Ok(new { Items = items, TotalCount = totalItems, PageNumber = pageNumber, PageSize = pageSize });
@@ -49,7 +51,7 @@ namespace FinanceTrackerAPI.Controllers;
 
         // GET: api/Incomes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Income>> GetIncome(int id)
+        public async Task<ActionResult<IncomeResponseDto>> GetIncome(int id)
         {
             var income = await _context.Incomes.FindAsync(id);
 
@@ -58,39 +60,51 @@ namespace FinanceTrackerAPI.Controllers;
                 return NotFound();
             }
 
-            return income;
+            var responseDto = new IncomeResponseDto(income.Id, income.Description, income.Amount, income.Date);
+            return responseDto;
         }
 
         // POST: api/Incomes
         [HttpPost]
-        public async Task<ActionResult<Income>> PostIncome(Income income)
+        public async Task<ActionResult<IncomeResponseDto>> PostIncome(IncomeDto incomeDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var income = new Income
+            {
+                Description = incomeDto.Description,
+                Amount = incomeDto.Amount,
+                Date = incomeDto.Date
+            };
 
             _context.Incomes.Add(income);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetIncome), new { id = income.Id }, income);
+            var responseDto = new IncomeResponseDto(income.Id, income.Description, income.Amount, income.Date);
+            return CreatedAtAction(nameof(GetIncome), new { id = income.Id }, responseDto);
         }
 
         // PUT: api/Incomes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIncome(int id, Income income)
+        public async Task<IActionResult> PutIncome(int id, IncomeDto incomeDto)
         {
-            if (id != income.Id)
-            {
-                return BadRequest();
-            }
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Entry(income).State = EntityState.Modified;
+            var income = await _context.Incomes.FindAsync(id);
+            if (income == null)
+            {
+                return NotFound();
+            }
+
+            income.Description = incomeDto.Description;
+            income.Amount = incomeDto.Amount;
+            income.Date = incomeDto.Date;
 
             try
             {
@@ -132,3 +146,4 @@ namespace FinanceTrackerAPI.Controllers;
             return _context.Incomes.Any(e => e.Id == id);
         }
     }
+}
