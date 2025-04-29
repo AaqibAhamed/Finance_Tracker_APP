@@ -3,3 +3,120 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+# Dependency directories
+## Ignore packages directory, make sure you checkin project.json/paket.dependencies/paket.lock files instead
+[Pp]ackages/
+## Ignore node_modules directory, make sure you checkin package.json/package-lock.json/yarn.lock files instead
+node_modules/
+## Ignore bower_components directory, make sure you checkin bower.json files instead
+bower_components/
+## Ignore lib directory, make sure you checkin libman.json files instead
+lib/
+
+# Build directories
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+
+# Build results
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.dll
+*.exe
+*.pdb
+*.nupkg
+*.snupkg
+*.zip
+*.tar.gz
+*.tgz
+
+# Visual Studio / IDE specific files
+.vs/
+*.csproj.user
+*.vbproj.user
+*.*proj.user
+*.sln.ide
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vsix
+*.vspx
+*.sap
+*.bak
+*.tsserverlibrary.*
+*.ngsummary.*
+*.sass.cache
+*.coverage
+*.coverage.xml
+*.codecoverage
+
+# User Secrets - The file itself is typically outside the project folder,
+# but this prevents accidental check-ins if it somehow ends up here.
+secrets.json
+
+# Environment specific configuration files - uncomment if you don't want to track them
+# Usually, appsettings.json is tracked, but environment-specific ones might contain secrets.
+# Consider using User Secrets or environment variables for sensitive data.
+# appsettings.*.json
+# !appsettings.Development.json # Example: Keep Development settings if non-sensitive
+
+# Rider specific files
+.idea/
+*.sln.iml
+*.DotSettings
+*.DotSettings.user
+
+# VS Code specific files (optional, uncomment if needed)
+# .vscode/
+
+# Mac / OS X specific files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.[Cc]overage
+*.trx
+
+# EF Core migrations (usually tracked, but ignore if generated locally and not shared)
+# Migrations/
+
+# Local database files (if used for development)
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal
+
+# Cache files
+*.cache
+
+# Output from other tools
+*.sass-cache/
