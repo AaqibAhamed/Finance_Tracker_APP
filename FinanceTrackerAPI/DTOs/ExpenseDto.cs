@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using FinanceTrackerAPI.Attributes;
 
 namespace FinanceTrackerAPI.DTOs
 {
@@ -13,6 +14,9 @@ namespace FinanceTrackerAPI.DTOs
         public decimal Amount { get; init; }
 
         [Required(ErrorMessage = "Date is required.")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DateNotInFuture(ErrorMessage = "Date cannot be in the future.")]
         public DateTime Date { get; init; }
     }
 
