@@ -6,7 +6,7 @@ namespace FinanceTrackerAPI.Models;
 public class Income
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required(ErrorMessage = "Description is required.")]
     public string Description { get; set; }
