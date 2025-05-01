@@ -1,11 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using FinanceTrackerAPI.Attributes;
 
 namespace FinanceTrackerAPI.DTOs
 {
     public record IncomeDto
     {
         [Required(ErrorMessage = "Description is required.")]
+        [MaxLength(200)]
         public string Description { get; init; }
 
         [Required(ErrorMessage = "Amount is required.")]
@@ -13,6 +15,9 @@ namespace FinanceTrackerAPI.DTOs
         public decimal Amount { get; init; }
 
         [Required(ErrorMessage = "Date is required.")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DateNotInFuture(ErrorMessage = "The date cannot be in the future.")]
         public DateTime Date { get; init; }
     }
 
