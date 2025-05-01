@@ -1,4 +1,4 @@
-using FinanceTrackerAPI.Models;
+using FinanceTrackerAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTrackerAPI.Data;
