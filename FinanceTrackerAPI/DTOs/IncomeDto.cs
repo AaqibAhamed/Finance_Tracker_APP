@@ -18,7 +18,7 @@ namespace FinanceTrackerAPI.DTOs
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DateNotInFuture(ErrorMessage = "The date cannot be in the future.")]
-        public DateTime Date { get; init; }
+        public required DateTime Date { get; init; }
     }
 
     public record IncomeResponseDto(int Id, string Description, decimal Amount, DateTime Date);

@@ -7,6 +7,7 @@ namespace FinanceTrackerAPI.DTOs
     public record ExpenseDto
     {
         [Required(ErrorMessage = "Description is required.")]
+        [MaxLength(200)]
         public string Description { get; init; }
 
         [Required(ErrorMessage = "Amount is required.")]
@@ -17,7 +18,7 @@ namespace FinanceTrackerAPI.DTOs
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DateNotInFuture(ErrorMessage = "Date cannot be in the future.")]
-        public DateTime Date { get; init; }
+        public required DateTime Date { get; init; }
     }
 
     public record ExpenseResponseDto(int Id, string Description, decimal Amount, DateTime Date);
