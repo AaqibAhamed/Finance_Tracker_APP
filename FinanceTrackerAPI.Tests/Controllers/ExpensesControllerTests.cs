@@ -95,7 +95,7 @@ namespace FinanceTrackerAPI.Tests.Controllers
         {
             // Arrange
             await using var context = GetInMemoryDbContext();
-            var expenseDto = new ExpenseDto { Amount = -50 }; // Invalid amount
+            var expenseDto = new ExpenseDto { Date = DateTime.Now, Amount = -50 }; // Invalid amount
             var controller = new ExpensesController(context);
             controller.ModelState.AddModelError("Amount", "Amount must be positive.");
 
@@ -144,7 +144,7 @@ namespace FinanceTrackerAPI.Tests.Controllers
         {
             // Arrange
             await using var context = GetInMemoryDbContext();
-            var expenseDto = new ExpenseDto { Amount = -10 }; // Invalid amount
+            var expenseDto = new ExpenseDto { Date = DateTime.Now, Amount = -10 }; // Invalid amount
             var controller = new ExpensesController(context);
             controller.ModelState.AddModelError("Amount", "Amount must be positive.");
 

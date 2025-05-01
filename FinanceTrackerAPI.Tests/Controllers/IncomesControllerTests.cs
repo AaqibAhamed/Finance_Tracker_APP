@@ -95,7 +95,7 @@ public class IncomesControllerTests
         {
             // Arrange
             await using var context = GetInMemoryDbContext();
-            var incomeDto = new IncomeDto { Amount = -100 }; // Invalid amount
+            var incomeDto = new IncomeDto { Date =DateTime.Now, Amount = -100 }; // Invalid amount
             var controller = new IncomesController(context);
             controller.ModelState.AddModelError("Amount", "Amount must be positive.");
 
@@ -144,7 +144,7 @@ public class IncomesControllerTests
         {
             // Arrange
             await using var context = GetInMemoryDbContext();
-            var incomeDto = new IncomeDto { Amount = -100 }; // Invalid amount
+            var incomeDto = new IncomeDto { Date =DateTime.Now, Amount = -100 }; // Invalid amount
             var controller = new IncomesController(context);
             controller.ModelState.AddModelError("Amount", "Amount must be positive.");
 
