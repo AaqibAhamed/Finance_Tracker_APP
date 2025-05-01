@@ -17,7 +17,7 @@ namespace FinanceTrackerAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
 
-            modelBuilder.Entity("FinanceTrackerAPI.Models.Expense", b =>
+            modelBuilder.Entity("FinanceTrackerAPI.Entities.Expense", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,7 +38,7 @@ namespace FinanceTrackerAPI.Migrations
                     b.ToTable("Expenses");
                 });
 
-            modelBuilder.Entity("FinanceTrackerAPI.Models.Income", b =>
+            modelBuilder.Entity("FinanceTrackerAPI.Entities.Income", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
