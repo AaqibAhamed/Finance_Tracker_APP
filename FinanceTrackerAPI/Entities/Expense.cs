@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using FinanceTrackerAPI.Attributes;
 
 namespace FinanceTrackerAPI.Entities;
 
@@ -10,7 +9,7 @@ public class Expense
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
     
-    public string Description { get; set; }
+    public required string Description { get; set; }
     
     public decimal Amount { get; set; }
     

@@ -1,8 +1,8 @@
 using FinanceTrackerAPI.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FinanceTrackerAPI.DTOs;
 using FinanceTrackerAPI.Entities;
+using FinanceTrackerModels.DTOs;
 
 namespace FinanceTrackerAPI.Controllers
 {
