@@ -1,0 +1,48 @@
+@page "/addExpense"
+@using FinanceTrackerUI.Services
+@using FinanceTrackerModels.DTOs
+@inject ExpenseService ExpenseService
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h5">Add Expense</MudText>
+    <MudForm @ref="_form" @bind-Model="expenseModel" @bind-IsValid="@success" @bind-Errors="@errors">
+        <MudTextField @bind-Value="expenseModel.Description" Label="Description" Required="true" RequiredError="Description is required" />
+        <MudNumericField  T="decimal"  @bind-Value="expenseModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required" Min="1" Format="N2" />
+        <MudDatePicker T="DateTime?" @bind-Date="expenseModel.Date" Label="Date" Required="true" RequiredError="Date is required" MaxDate="@DateTime.Now.Date" />
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3" OnClick="SaveExpense" Disabled="@(!success)">Save Expense</MudButton>
+    </MudForm>
+    <MudAlert Severity="Severity.Success" Class="mt-3" Visible="@_showSuccessAlert">Expense added successfully!</MudAlert>
+    <MudAlert Severity="Severity.Error" Class="mt-3" Visible="@_showErrorAlert">Failed to add expense.</MudAlert>
+</MudPaper>
+
+@code {
+    private MudForm? _form;
+    private ExpenseDto expenseModel = new ExpenseDto { Date = DateTime.Now.Date };
+    private bool success;
+    private string[] errors = [];
+    private bool _showSuccessAlert = false;
+    private bool _showErrorAlert = false;
+
+    private async Task SaveExpense()
+    {
+        await _form!.Validate();
+
+        if (success)
+        {
+            var response = await ExpenseService.AddExpense(expenseModel);
+            if (response.IsSuccessStatusCode)
+            {
+                _showSuccessAlert = true;
+                _showErrorAlert = false;
+                expenseModel = new ExpenseDto { Date = DateTime.Now.Date }; // Reset form
+                _form.ResetAsync();
+            }
+            else
+            {
+                _showSuccessAlert = false;
+                _showErrorAlert = true;
+            }
+        }
+    }
+}
