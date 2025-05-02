@@ -13,5 +13,5 @@ public class Expense
     
     public decimal Amount { get; set; }
     
-    public DateTime Date { get; set; }
+    public DateTime? Date { get; set; }
 }
