@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using FinanceTrackerUI;
+using FinanceTrackerUI.Services;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -9,5 +10,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMudServices(); // Register MudBlazor services
+
+// Register our services
+builder.Services.AddScoped<IncomeService>();
+builder.Services.AddScoped<ExpenseService>();
 
 await builder.Build().RunAsync();
