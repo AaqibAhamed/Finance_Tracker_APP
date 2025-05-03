@@ -1,0 +1,71 @@
+@page "/editincome/{id:int}"
+@using FinanceTrackerModels.DTOs
+@using FinanceTrackerUI.Services
+@inject IncomeService IncomeService
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-4">
+    <MudText Typo="Typo.h5">Edit Income</MudText>
+    <MudForm @ref="_form" @bind-Model="incomeModel" @bind-IsValid="@success" @bind-Errors="@errors">
+        <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true" RequiredError="Description is required" />
+        <MudNumericField  T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required" Min="1" Format="N2" />
+        <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required" MaxDate="@DateTime.Now.Date" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="UpdateIncome" Disabled="@(!success)">Update Income</MudButton>
+        <MudButton Variant="Variant.Outlined" Class="ml-2 mt-3" OnClick="Cancel">Cancel</MudButton>
+    </MudForm>
+    <MudAlert Severity="Severity.Success" Class="mt-3" Visible="@_showSuccessAlert">Income updated successfully!</MudAlert>
+    <MudAlert Severity="Severity.Error" Class="mt-3" Visible="@_showErrorAlert">Failed to update income.</MudAlert>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private MudForm? _form;
+    private GetIncomeDto incomeModel = new GetIncomeDto();
+    private IncomeDto updateIncomeModel = new IncomeDto();
+    private bool success;
+    private string[] errors = [];
+    private bool _showSuccessAlert = false;
+    private bool _showErrorAlert = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var income = await IncomeService.GetIncome(Id);
+        if (income != null)
+        {
+            incomeModel = income;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/"); // Redirect if income not found
+        }
+    }
+
+    private async Task UpdateIncome()
+    {
+        await _form!.Validate();
+
+        if (success)
+        {
+            var response = await IncomeService.UpdateIncome(Id, updateIncomeModel);
+            if (response.IsSuccessStatusCode)
+            {
+                _showSuccessAlert = true;
+                _showErrorAlert = false;
+                await Task.Delay(1500); // Show success message briefly
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                _showSuccessAlert = false;
+                _showErrorAlert = true;
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
