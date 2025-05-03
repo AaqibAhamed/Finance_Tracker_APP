@@ -9,7 +9,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5243/") }); // Use your API base URL
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7131") }); // Use your API base URL
 
 builder.Services.AddMudServices(); // Register MudBlazor services
 
