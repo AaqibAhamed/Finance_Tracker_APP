@@ -26,7 +26,7 @@ namespace FinanceTrackerAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -47,7 +47,7 @@ namespace FinanceTrackerAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
