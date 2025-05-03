@@ -10,7 +10,7 @@ namespace FinanceTrackerModels.DTOs
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Amount is required.")]
-        [Range(typeof(decimal), "1", "79228162514264337593543950335", ErrorMessage = "Amount must be a positive number.")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be a positive number.")] 
         public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Date is required.")]
