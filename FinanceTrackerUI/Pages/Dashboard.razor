@@ -155,37 +155,4 @@
         }
     }
 
-    /*private async Task DeleteIncome(int id)
-    {
-        if (await MudDialog.Confirm("Are you sure you want to delete this income entry?"))
-        {
-            var response = await IncomeService.DeleteIncome(id);
-            if (response.IsSuccessStatusCode)
-            {
-                await LoadData();
-                StatehasChanged();
-            }
-            else
-            {
-                await MudDialog.Alert("Failed to delete income entry.");
-            }
-        }
-    }
-
-    private async Task DeleteExpense(int id)
-    {
-        if (await MudDialog.Confirm("Are you sure you want to delete this expense entry?"))
-        {
-            var response = await ExpenseService.DeleteExpense(id);
-            if (response.IsSuccessStatusCode)
-            {
-                await LoadData();
-                StatehasChanged();
-            }
-            else
-            {
-                await MudDialog.Alert("Failed to delete expense entry.");
-            }
-        }
-    }*/
 }
