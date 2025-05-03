@@ -12,20 +12,20 @@ public class IncomeService
         _httpClient = httpClient;
     }
 
-    public async Task<(IEnumerable<IncomeDto> Items, int TotalCount, int PageNumber, int PageSize)> GetIncomes(int pageNumber = 1, int pageSize = 10, string? sortBy = null, string? sortDirection = null)
+    public async Task<(IEnumerable<GetIncomeDto> Items, int TotalCount, int PageNumber, int PageSize)> GetIncomes(int pageNumber = 1, int pageSize = 10, string? sortBy = null, string? sortDirection = null)
     {
         var query = $"api/Incomes?pageNumber={pageNumber}&pageSize={pageSize}";
         if (!string.IsNullOrEmpty(sortBy))
         {
             query += $"&sortBy={sortBy}&sortDirection={sortDirection}";
         }
-        var response = await _httpClient.GetFromJsonAsync<ApiResponse<IncomeDto>>(query);
-        return (response?.Items ?? new List<IncomeDto>(), response?.TotalCount ?? 0, response?.PageNumber ?? 1, response?.PageSize ?? 10);
+        var response = await _httpClient.GetFromJsonAsync<ApiResponse<GetIncomeDto>>(query);
+        return (response?.Items ?? new List<GetIncomeDto>(), response?.TotalCount ?? 0, response?.PageNumber ?? 1, response?.PageSize ?? 10);
     }
 
-    public async Task<IncomeDto?> GetIncome(int id)
+    public async Task<GetIncomeDto?> GetIncome(int id)
     {
-        return await _httpClient.GetFromJsonAsync<IncomeDto>($"api/Incomes/{id}");
+        return await _httpClient.GetFromJsonAsync<GetIncomeDto>($"api/Incomes/{id}");
     }
 
     public async Task<HttpResponseMessage> AddIncome(IncomeDto income)
