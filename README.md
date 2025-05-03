@@ -42,7 +42,7 @@ The application follows a standard three-tier architecture:
         ```bash
         dotnet run
         ```
-        The API will typically run on `https://localhost:<port>`. Note the port number. eg. `http://localhost:5243`
+        The API will typically run on `https://localhost:<port>`. Note the port number. eg. `https://localhost:7131`
 
     * Note -  Add Blazor WebAssembly URL (including the port number) into CORS policy in Program.cs `FinanceTrackerAPI/Program.cs`
 
@@ -50,14 +50,14 @@ The application follows a standard three-tier architecture:
     * Navigate to the `FinanceTrackerUI` directory in your terminal.
     * Open the `FinanceTrackerUI/Program.cs` file and ensure the `HttpClient.BaseAddress` is set to the correct URL of your backend API (including the port number). For example:
         ```csharp
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:<your_api_port>") });
-        //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5243/") }); 
+        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:<your_api_port>") });
+        //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7131") }); 
         ```
     * Run the Blazor WebAssembly application:
         ```bash
         dotnet run
         ```
-        The frontend will typically run on `https://localhost:<another_port>`.
+        The frontend will typically run on `https://localhost:<another_port>`. eg.`https://localhost:7077`
 
     * Note -  Add above Blazor WebAssembly URL (including the port number) into CORS policy in Program.cs `FinanceTrackerAPI/Program.cs` file of the `FinanceTrackerAPI`
 
