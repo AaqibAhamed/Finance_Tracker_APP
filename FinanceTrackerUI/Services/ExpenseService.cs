@@ -12,20 +12,20 @@ public class ExpenseService
         _httpClient = httpClient;
     }
 
-    public async Task<(IEnumerable<ExpenseDto> Items, int TotalCount, int PageNumber, int PageSize)> GetExpenses(int pageNumber = 1, int pageSize = 10, string? sortBy = null, string? sortDirection = null)
+    public async Task<(IEnumerable<GetExpenseDto> Items, int TotalCount, int PageNumber, int PageSize)> GetExpenses(int pageNumber = 1, int pageSize = 10, string? sortBy = null, string? sortDirection = null)
     {
         var query = $"api/Expenses?pageNumber={pageNumber}&pageSize={pageSize}";
         if (!string.IsNullOrEmpty(sortBy))
         {
             query += $"&sortBy={sortBy}&sortDirection={sortDirection}";
         }
-        var response = await _httpClient.GetFromJsonAsync<ApiResponse<ExpenseDto>>(query);
-        return (response?.Items ?? new List<ExpenseDto>(), response?.TotalCount ?? 0, response?.PageNumber ?? 1, response?.PageSize ?? 10);
+        var response = await _httpClient.GetFromJsonAsync<ApiResponse<GetExpenseDto>>(query);
+        return (response?.Items ?? new List<GetExpenseDto>(), response?.TotalCount ?? 0, response?.PageNumber ?? 1, response?.PageSize ?? 10);
     }
 
-    public async Task<ExpenseDto?> GetExpense(int id)
+    public async Task<GetExpenseDto?> GetExpense(int id)
     {
-        return await _httpClient.GetFromJsonAsync<ExpenseDto>($"api/Expenses/{id}");
+        return await _httpClient.GetFromJsonAsync<GetExpenseDto>($"api/Expenses/{id}");
     }
 
     public async Task<HttpResponseMessage> AddExpense(ExpenseDto expense)
