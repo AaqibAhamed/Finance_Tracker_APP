@@ -36,6 +36,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowBlazorClient"); // Apply the CORS policy you defined
+
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>(); // Add the global exception handler
 
 app.UseAuthorization();
