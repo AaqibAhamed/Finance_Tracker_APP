@@ -48,6 +48,10 @@
 
         if (success)
         {
+            updateExpenseModel.Description = expenseModel.Description;
+            updateExpenseModel.Amount = expenseModel.Amount;
+            updateExpenseModel.Date = expenseModel.Date;
+            
             var response = await ExpenseService.UpdateExpense(Id, updateExpenseModel);
             if (response.IsSuccessStatusCode)
             {
