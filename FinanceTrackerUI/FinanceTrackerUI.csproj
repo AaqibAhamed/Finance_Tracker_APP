@@ -16,5 +16,9 @@
     <ProjectReference Include="..\FinanceTrackerModels\FinanceTrackerModels.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\" />
+    </ItemGroup>
+
 
 </Project>
