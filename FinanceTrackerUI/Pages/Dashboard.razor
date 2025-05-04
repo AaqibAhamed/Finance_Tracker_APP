@@ -33,6 +33,12 @@
     <MudText Typo="Typo.h6" Class="mt-4">Recent Transactions</MudText>
     <MudTabs Elevation="2" Rounded="true">
         <MudTab Title="Income">
+        <title>Income</title>
+            <MudGrid Spacing="3">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/addIncome">Add Income</MudButton>
+                </MudItem>
+            </MudGrid>
             <MudTable Items="@incomes" Dense="@dense" hover="@hover" Bordered="@bordered" Striped="@striped">
                 <HeaderContent>
                     <MudTh>Description</MudTh>
@@ -55,6 +61,7 @@
             </MudTable>
         </MudTab>
         <MudTab Title="Expenses">
+           <title>Expenses</title>
             <MudTable Items="@expenses" Dense="@dense" hover="@hover" Bordered="@bordered" Striped="@striped">
                 <HeaderContent>
                     <MudTh>Description</MudTh>
