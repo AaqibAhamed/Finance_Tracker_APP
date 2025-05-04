@@ -3,44 +3,86 @@
 @using FinanceTrackerModels.DTOs
 @inject ExpenseService ExpenseService
 
-<MudPaper Class="pa-4">
-    <MudText Typo="Typo.h5">Add Expense</MudText>
-    <MudForm @ref="_form" @bind-Model="expenseModel" @bind-IsValid="@success" @bind-Errors="@errors">
-        <MudTextField @bind-Value="expenseModel.Description" Label="Description" Required="true" RequiredError="Description is required" />
-        <MudNumericField  T="decimal"  @bind-Value="expenseModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required" Min="1" Format="N2" />
-        <MudDatePicker T="DateTime?" @bind-Date="expenseModel.Date" Label="Date" Required="true" RequiredError="Date is required" MaxDate="@DateTime.Now.Date" />
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3" OnClick="SaveExpense" Disabled="@(!success)">Save Expense</MudButton>
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<MudCard Class="mt-4">
+    <MudForm @ref="_form" Model="@expenseModel" @bind-IsValid="@_formIsValid" ValidationDelay="0">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Add New Expense</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="expenseModel.Description" Label="Description" Required="true"
+                RequiredError="Description is required." For="@(() => expenseModel.Description)" />
+            <MudNumericField T="decimal" @bind-Value="expenseModel.Amount" Label="Amount" Required="true"
+                RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2"
+                For="@(() => expenseModel.Amount)" Class="mt-3" />
+            <MudDatePicker @bind-Date="expenseModel.Date" Label="Date" Required="true" RequiredError="Date is required."
+                MaxDate="@DateTime.Now.Date" For="@(() => expenseModel.Date)" Class="mt-3" />
+        </MudCardContent>
+        <MudCardActions Class="pa-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="SaveExpense"
+                Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
+                @if (_isSaving)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Save Expense</span>
+                }
+            </MudButton>
+        </MudCardActions>
     </MudForm>
-    <MudAlert Severity="Severity.Success" Class="mt-3" Visible="@_showSuccessAlert">Expense added successfully!</MudAlert>
-    <MudAlert Severity="Severity.Error" Class="mt-3" Visible="@_showErrorAlert">Failed to add expense.</MudAlert>
-</MudPaper>
+</MudCard>
 
 @code {
     private MudForm? _form;
     private ExpenseDto expenseModel = new ExpenseDto { Date = DateTime.Now.Date };
-    private bool success;
-    private string[] errors = [];
-    private bool _showSuccessAlert = false;
-    private bool _showErrorAlert = false;
+    private bool _formIsValid;
+    private bool _isSaving = false;
 
     private async Task SaveExpense()
     {
-        await _form!.Validate();
+        if (_isSaving) return; // Prevent double clicks
 
-        if (success)
+        await _form!.Validate(); // Ensure form is validated before proceeding
+
+        if (_formIsValid)
         {
-            var response = await ExpenseService.AddExpense(expenseModel);
-            if (response.IsSuccessStatusCode)
+            _isSaving = true;
+            StateHasChanged(); // Update UI to show loading state
+
+            try
             {
-                _showSuccessAlert = true;
-                _showErrorAlert = false;
-                expenseModel = new ExpenseDto { Date = DateTime.Now.Date }; // Reset form
-                _form.ResetAsync();
+                var response = await ExpenseService.AddExpense(expenseModel);
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Expense added successfully!", Severity.Success, config =>
+                    {
+                        config.Action = "View Dashboard";
+                        config.ActionColor = Color.Primary;
+                        config.OnClick = snackbar => { NavigationManager.NavigateTo("/"); return Task.CompletedTask; };
+                    });
+                    expenseModel = new ExpenseDto { Date = DateTime.Now.Date }; // Reset model
+                    await _form.ResetAsync(); // Reset form validation state
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to add expense. Status: {response.StatusCode}", Severity.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _showSuccessAlert = false;
-                _showErrorAlert = true;
+                Snackbar.Add("An error occurred while saving the expense.", Severity.Error);
+            }
+            finally
+            {
+                _isSaving = false;
+                StateHasChanged(); // Update UI to remove loading state
             }
         }
     }
