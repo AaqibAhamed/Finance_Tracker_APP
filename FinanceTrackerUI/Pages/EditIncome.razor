@@ -2,20 +2,44 @@
 @using FinanceTrackerModels.DTOs
 @using FinanceTrackerUI.Services
 @inject IncomeService IncomeService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<MudPaper Class="pa-4">
-    <MudText Typo="Typo.h5">Edit Income</MudText>
-    <MudForm @ref="_form" @bind-Model="incomeModel" @bind-IsValid="@success" @bind-Errors="@errors">
-        <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true" RequiredError="Description is required" />
-        <MudNumericField  T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required" Min="1" Format="N2" />
-        <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required" MaxDate="@DateTime.Now.Date" />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="UpdateIncome" Disabled="@(!success)">Update Income</MudButton>
-        <MudButton Variant="Variant.Outlined" Class="ml-2 mt-3" OnClick="Cancel">Cancel</MudButton>
+<MudCard Class="mt-4">
+    <MudForm @ref="_form" Model="@incomeModel" @bind-IsValid="@_formIsValid" ValidationDelay="0">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Edit Income</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true"
+                RequiredError="Description is required." For="@(() => incomeModel.Description)" />
+            <MudNumericField T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true"
+                RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2"
+                For="@(() => incomeModel.Amount)" Class="mt-3" />
+            <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required."
+                MaxDate="@DateTime.Now.Date" For="@(() => incomeModel.Date)" Class="mt-3" />
+        </MudCardContent>
+        <MudCardActions Class="pa-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateIncome"
+                Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
+                @if (_isSaving)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Update Income</span>
+                }
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel" Disabled="@_isSaving" Class="ml-2">Cancel / Back
+            </MudButton>
+        </MudCardActions>
     </MudForm>
-    <MudAlert Severity="Severity.Success" Class="mt-3" Visible="@_showSuccessAlert">Income updated successfully!</MudAlert>
-    <MudAlert Severity="Severity.Error" Class="mt-3" Visible="@_showErrorAlert">Failed to update income.</MudAlert>
-</MudPaper>
+</MudCard>
+
 
 @code {
     [Parameter]
@@ -24,10 +48,9 @@
     private MudForm? _form;
     private GetIncomeDto incomeModel = new GetIncomeDto();
     private IncomeDto updateIncomeModel = new IncomeDto();
-    private bool success;
-    private string[] errors = [];
-    private bool _showSuccessAlert = false;
-    private bool _showErrorAlert = false;
+    private bool _formIsValid;
+    private bool _isSaving = false;
+    private bool _isLoading = true; // To show loading initially
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,37 +58,57 @@
         if (income != null)
         {
             incomeModel = income;
+            _isLoading = false; // Data loaded
         }
         else
         {
+            Snackbar.Add("Income record not found.", Severity.Error);
             NavigationManager.NavigateTo("/"); // Redirect if income not found
         }
     }
 
     private async Task UpdateIncome()
     {
+        if (_isSaving) return; // Prevent double clicks
+
         await _form!.Validate();
 
-        if (success)
+        if (_formIsValid)
         {
+            _isSaving = true;
+            StateHasChanged(); // Update UI to show loading state
+
             updateIncomeModel.Description = incomeModel.Description;
             updateIncomeModel.Amount = incomeModel.Amount;
             updateIncomeModel.Date = incomeModel.Date;
-            
-            @* Console.WriteLine($"Updating Income: {System.Text.Json.JsonSerializer.Serialize(updateIncomeModel)}"); *@
-            var response = await IncomeService.UpdateIncome(Id, updateIncomeModel);
-          
-            if (response.IsSuccessStatusCode)
+
+            try
             {
-                _showSuccessAlert = true;
-                _showErrorAlert = false;
-                await Task.Delay(1500); // Show success message briefly
-                NavigationManager.NavigateTo("/");
+                var response = await IncomeService.UpdateIncome(Id, updateIncomeModel);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Income updated successfully!", Severity.Success, config =>
+                    {
+                        config.Action = "View Dashboard";
+                        config.ActionColor = Color.Primary;
+                        config.OnClick = snackbar => { NavigationManager.NavigateTo("/"); return Task.CompletedTask; };
+                    });
+                    // Optionally navigate immediately: NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to update income. Status: {response.StatusCode}", Severity.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _showSuccessAlert = false;
-                _showErrorAlert = true;
+                Snackbar.Add("An error occurred while updating the income.", Severity.Error);
+            }
+            finally
+            {
+                _isSaving = false;
+                StateHasChanged(); // Update UI to remove loading state
             }
         }
     }
@@ -74,4 +117,5 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
 }
