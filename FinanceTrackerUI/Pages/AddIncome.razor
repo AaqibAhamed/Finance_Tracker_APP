@@ -3,46 +3,82 @@
 @using FinanceTrackerModels.DTOs
 @inject IncomeService IncomeService
 
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
-<MudPaper Class="pa-4">
-    <MudText Typo="Typo.h5">Add Income</MudText>
-    <MudForm @ref="_form" @bind-Model="incomeModel" @bind-IsValid="@success" @bind-Errors="@errors">
-        <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true" RequiredError="Description is required" />
-        <MudNumericField T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required" Min="1" Format="N2" />
-        <MudDatePicker T="DateTime?" @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required" MaxDate="@DateTime.Now.Date" />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" OnClick="SaveIncome" Disabled="@(!success)">Save Income</MudButton>
+<MudCard Class="mt-4">
+    <MudForm @ref="_form" Model="@incomeModel" @bind-IsValid="@_formIsValid" ValidationDelay="0">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Add New Income</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true" RequiredError="Description is required." For="@(() => incomeModel.Description)" />
+            <MudNumericField T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2" For="@(() => incomeModel.Amount)" Class="mt-3" />
+            <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required." MaxDate="@DateTime.Now.Date" For="@(() => incomeModel.Date)" Class="mt-3" />
+        </MudCardContent>
+        <MudCardActions Class="pa-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveIncome" Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
+                @if (_isSaving)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Save Income</span>
+                }
+            </MudButton>
+        </MudCardActions>
     </MudForm>
-    <MudAlert Severity="Severity.Success" Class="mt-3" Visible="@_showSuccessAlert">Income added successfully!</MudAlert>
-    <MudAlert Severity="Severity.Error" Class="mt-3" Visible="@_showErrorAlert">Failed to add income.</MudAlert>
-</MudPaper>
+</MudCard>
 
 @code {
     private MudForm? _form;
     private IncomeDto incomeModel = new IncomeDto { Date = DateTime.Now.Date };
-    private bool success;
-    private string[] errors = [];
-    private bool _showSuccessAlert = false;
-    private bool _showErrorAlert = false;
+    private bool _formIsValid;
+    private bool _isSaving = false;
 
     private async Task SaveIncome()
     {
-        await _form!.Validate();
+        if (_isSaving) return; // Prevent double clicks
 
-        if (success)
+        await _form!.Validate(); // Ensure form is validated before proceeding
+
+        if (_formIsValid)
         {
-            var response = await IncomeService.AddIncome(incomeModel);
-            if (response.IsSuccessStatusCode)
+            _isSaving = true;
+            StateHasChanged(); // Update UI to show loading state
+
+            try
             {
-                _showSuccessAlert = true;
-                _showErrorAlert = false;
-                incomeModel = new IncomeDto { Date = DateTime.Now.Date }; // Reset form
-                _form.ResetAsync();
+                var response = await IncomeService.AddIncome(incomeModel);
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Income added successfully!", Severity.Success, config =>
+                    {
+                        config.Action = "View Dashboard";
+                        config.ActionColor = Color.Primary;
+                        config.OnClick = snackbar => { NavigationManager.NavigateTo("/"); return Task.CompletedTask; };
+                    });
+                    incomeModel = new IncomeDto { Date = DateTime.Now.Date }; // Reset model
+                    await _form.ResetAsync(); // Reset form validation state
+                }
+                else
+                {   
+                    Snackbar.Add($"Failed to add income. Status: {response.StatusCode}", Severity.Error);
+                }
             }
-            else
+            catch (Exception ex)
+            {              
+                Snackbar.Add("An error occurred while saving the income.", Severity.Error);
+            }
+            finally
             {
-                _showSuccessAlert = false;
-                _showErrorAlert = true;
+                _isSaving = false;
+                StateHasChanged(); // Update UI to remove loading state
             }
-        }
-    }
-}
+         }
+     }
+ }
