@@ -48,7 +48,13 @@
 
         if (success)
         {
+            updateIncomeModel.Description = incomeModel.Description;
+            updateIncomeModel.Amount = incomeModel.Amount;
+            updateIncomeModel.Date = incomeModel.Date;
+            
+            @* Console.WriteLine($"Updating Income: {System.Text.Json.JsonSerializer.Serialize(updateIncomeModel)}"); *@
             var response = await IncomeService.UpdateIncome(Id, updateIncomeModel);
+          
             if (response.IsSuccessStatusCode)
             {
                 _showSuccessAlert = true;
