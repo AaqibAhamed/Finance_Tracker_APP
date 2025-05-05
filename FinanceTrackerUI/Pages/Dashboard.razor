@@ -1,0 +1,207 @@
+@page "/"
+@using FinanceTrackerModels.DTOs
+@using FinanceTrackerUI.Services
+@using MudBlazor.Extensions
+@inject IncomeService IncomeService
+@inject ExpenseService ExpenseService
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" GutterBottom="true" Color="Color.Primary">Personal Finance Summary</MudText>
+
+    <MudGrid Spacing="3">
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: 8px;">
+                <MudCardContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6">Total Income</MudText>
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Success" />
+                    </MudStack>
+                    <MudText Typo="Typo.h5" Class="mt-2" Color="Color.Primary" Style="white-space: nowrap; overflow-x: scroll; max-width: 100%;">
+                        $@totalIncome.ToString("N2")
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard Elevation="4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: 8px;">
+                <MudCardContent>
+                     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6">Total Expenses</MudText>
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingDown" Color="Color.Error" />
+                    </MudStack>
+                    <MudText Typo="Typo.h5" Class="mt-2" Color="Color.Warning" Style="white-space: nowrap; overflow-x: scroll; max-width: 100%;">
+                        $@totalExpenses.ToString("N2")
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+            <MudCard Elevation="4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: 8px;">
+                <MudCardContent>
+                     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6">Net Savings</MudText>
+                        <MudIcon Icon="@(savings >= 0 ? Icons.Material.Filled.AccountBalanceWallet : Icons.Material.Filled.Warning)" Color="@(savings >= 0 ? Color.Info : Color.Error)"/>
+                    </MudStack>
+                    <MudText Typo="Typo.h5" Class="mt-2" Color="@(savings >= 0 ? Color.Success : Color.Error)" Style="white-space: nowrap; overflow-x: scroll; max-width: 100%;">
+                        $@savings.ToString("N2")
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
+    <MudCard Elevation="4" Class="mt-6" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: 8px;">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6" Color="Color.Primary">Incomes</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="/addIncome">Add Income</MudButton>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent Class="pa-0"> @* Remove padding to let table fill width *@
+            <MudTable Items="@incomes" Dense="@dense" hover="@hover" Bordered="@bordered" Striped="@striped">
+                <HeaderContent>
+                    <MudTh>Description</MudTh>
+                    <MudTh Sortable="true" SortBy="@(new Func<GetIncomeDto, object>(x => x.Amount))">Amount</MudTh>
+                    <MudTh Sortable="true" SortBy="@(new Func<GetIncomeDto, object>(x => x.Date))">Date</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Description">@context.Description</MudTd>
+                    <MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
+                    <MudTd DataLabel="Date">@context.Date.ToIsoDateString()</MudTd>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" href="@($"/editincome/{context.Id}")"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Secondary" OnClick="@(() => DeleteIncome(context.Id))"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>No income records found.</MudText>
+                </NoRecordsContent>
+                 <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[]{5, 10, 20}" />
+                </PagerContent>
+            </MudTable>
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Elevation="4" Class="mt-6 mb-4" Style="border: 1px solid var(--mud-palette-lines-default); border-radius: 8px;">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6" Color="Color.Secondary">Expenses</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Add" Href="/addExpense">Add Expense</MudButton>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent Class="pa-0"> @* Remove padding to let table fill width *@
+            <MudTable Items="@expenses" Dense="@dense" hover="@hover" Bordered="@bordered" Striped="@striped">
+                <HeaderContent>
+                    <MudTh>Description</MudTh>
+                    <MudTh Sortable="true" SortBy="@(new Func<GetExpenseDto, object>(x => x.Amount))">Amount</MudTh>
+                    <MudTh Sortable="true" SortBy="@(new Func<GetExpenseDto, object>(x => x.Date))">Date</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Description">@context.Description</MudTd>
+                    <MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
+                    <MudTd DataLabel="Date">@context.Date.ToIsoDateString()</MudTd>
+                    <MudTd>
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Color="Color.Primary" href="@($"/editexpense/{context.Id}")"></MudIconButton>
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Small" Color="Color.Secondary" OnClick="@(() => DeleteExpense(context.Id))"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                 <NoRecordsContent>
+                    <MudText>No expense records found.</MudText>
+                </NoRecordsContent>
+                 <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[]{5, 10, 20}" />
+                </PagerContent>
+            </MudTable>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private IEnumerable<GetIncomeDto> incomes = new List<GetIncomeDto>();
+    private IEnumerable<GetExpenseDto> expenses = new List<GetExpenseDto>();
+    private decimal totalIncome = 0;
+    private decimal totalExpenses = 0;
+    private decimal savings = 0;
+
+    // Table options - adjust as needed for your preferred style
+    private bool dense = true; // Dense tables often look better in cards
+    private bool hover = true;
+    private bool bordered = false;
+    private bool striped = false;
+    // Removed MudTable references (table, table2) as they are not strictly needed for this setup
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var incomeResult = await IncomeService.GetIncomes(pageSize: 1000); // Load a reasonable number for display, adjust if needed
+        incomes = incomeResult.Items;
+        totalIncome = incomes.Sum(i => i.Amount);
+
+        var expenseResult = await ExpenseService.GetExpenses(pageSize: 1000); // Load a reasonable number for display, adjust if needed
+        expenses = expenseResult.Items;
+        totalExpenses = expenses.Sum(e => e.Amount);
+
+        savings = totalIncome - totalExpenses;
+    }
+    
+    private async Task DeleteIncome(int id)
+    {
+        var parameters = new DialogParameters<ConfirmationDialog> { { x => x.ContentText, "Are you sure you want to delete this income entry?" } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+        var dialog = DialogService.Show<ConfirmationDialog>("Confirm Deletion", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var response = await IncomeService.DeleteIncome(id);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadData();
+                StateHasChanged();
+            }
+            else
+            {
+                // Consider using MudSnackbar for less intrusive error messages
+                // Snackbar.Add("Failed to delete income entry.", Severity.Error);
+            }
+        }
+    }
+
+    private async Task DeleteExpense(int id)
+    {
+        var parameters = new DialogParameters<ConfirmationDialog> { { x => x.ContentText, "Are you sure you want to delete this expense entry?" } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small };
+        var dialog = DialogService.Show<ConfirmationDialog>("Confirm Deletion", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var response = await ExpenseService.DeleteExpense(id);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadData();
+                StateHasChanged();
+            }
+            else
+            {
+                 // Consider using MudSnackbar for less intrusive error messages
+                // Snackbar.Add("Failed to delete expense entry.", Severity.Error);
+            }
+        }
+    }
+
+    // Inject Snackbar service if you want to use it for notifications
+    // @inject ISnackbar Snackbar
+}

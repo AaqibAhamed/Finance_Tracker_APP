@@ -17,8 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-      <Folder Include="Models\" />
+    <ProjectReference Include="..\FinanceTrackerModels\FinanceTrackerModels.csproj" />
     </ItemGroup>
 
 </Project>

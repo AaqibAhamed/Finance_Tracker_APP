@@ -1,0 +1,120 @@
+@page "/editexpense/{id:int}"
+@using FinanceTrackerModels.DTOs
+@using FinanceTrackerUI.Services
+@inject ExpenseService ExpenseService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudCard Class="mt-4">
+    <MudForm @ref="_form" Model="@_expenseModel" @bind-IsValid="@_formIsValid" ValidationDelay="0">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Edit Expense</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="_expenseModel.Description" Label="Description" Required="true"
+                RequiredError="Description is required." For="@(() => _expenseModel.Description)" />
+            <MudNumericField T="decimal" @bind-Value="_expenseModel.Amount" Label="Amount" Required="true"
+                RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2"
+                For="@(() => _expenseModel.Amount)" Class="mt-3" />
+            <MudDatePicker @bind-Date="_expenseModel.Date" Label="Date" Required="true" RequiredError="Date is required."
+                MaxDate="@DateTime.Now.Date" For="@(() => _expenseModel.Date)" Class="mt-3" />
+        </MudCardContent>
+        <MudCardActions Class="pa-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="UpdateExpense"
+                Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
+                @if (_isSaving)
+                {
+                    <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Update Expense</span>
+                }
+            </MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel" Disabled="@_isSaving" Class="ml-2">Cancel / Back
+            </MudButton>
+        </MudCardActions>
+    </MudForm>
+</MudCard>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private MudForm? _form;
+    private readonly ExpenseDto _updateExpenseModel = new ExpenseDto();
+    private GetExpenseDto _expenseModel = new GetExpenseDto();
+    private bool _formIsValid;
+    private bool _isSaving;
+    private bool _isLoading = true; // To show loading initially
+
+   protected override async Task OnInitializedAsync()
+    {
+        var expense = await ExpenseService.GetExpense(Id);
+        if (expense != null)
+        {
+            _expenseModel = expense;
+            _isLoading = false; // Data loaded
+        }
+        else
+        {
+            Snackbar.Add("Expense record not found.", Severity.Error);
+            NavigationManager.NavigateTo("/"); // Redirect if expense not found
+        }
+    }
+
+    private async Task UpdateExpense()
+    {
+        if (_isSaving) return; // Prevent double clicks
+
+        await _form!.Validate();
+
+        if (_formIsValid)
+        {
+            _isSaving = true;
+            StateHasChanged(); // Update UI to show loading state
+
+            _updateExpenseModel.Description = _expenseModel.Description;
+            _updateExpenseModel.Amount = _expenseModel.Amount;
+            _updateExpenseModel.Date = _expenseModel.Date;
+
+            try
+            {
+                var response = await ExpenseService.UpdateExpense(Id, _updateExpenseModel);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Snackbar.Add("Expense updated successfully!", Severity.Success, config =>
+                    {
+                        config.Action = "View Dashboard";
+                        config.ActionColor = Color.Primary;
+                        config.OnClick = snackbar => { NavigationManager.NavigateTo("/"); return Task.CompletedTask; };
+                    });
+                    // Optionally navigate immediately: NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    Snackbar.Add($"Failed to update expense. Status: {response.StatusCode}", Severity.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log ex
+                Snackbar.Add("An error occurred while updating the expense.", Severity.Error);
+            }
+            finally
+            {
+                _isSaving = false;
+                StateHasChanged(); // Update UI to remove loading state
+             }
+         }
+     }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
