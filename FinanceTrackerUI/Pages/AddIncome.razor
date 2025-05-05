@@ -6,7 +6,7 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<MudCard Class="mt-4">
+<MudCard Class="mt-4" Elevation="2" Outlined="true">
     <MudForm @ref="_form" Model="@incomeModel" @bind-IsValid="@_formIsValid" ValidationDelay="0">
         <MudCardHeader>
             <CardHeaderContent>
