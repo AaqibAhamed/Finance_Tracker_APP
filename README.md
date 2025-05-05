@@ -40,7 +40,7 @@ The application follows a standard three-tier architecture:
         ```
     * Run the backend API:
         ```bash
-        dotnet run
+        dotnet run or dotnet run -lp 'https' 
         ```
         The API will typically run on `https://localhost:<port>`. Note the port number. eg. `https://localhost:7131`
 
@@ -55,9 +55,11 @@ The application follows a standard three-tier architecture:
         ```
     * Run the Blazor WebAssembly application:
         ```bash
-        dotnet run
+        dotnet run or dotnet run -lp 'https'
         ```
+        ``` dotnet watch  run -lp 'https' ```  -To Enable hot-reload 
         The frontend will typically run on `https://localhost:<another_port>`. eg.`https://localhost:7077`
+
 
     * Note -  Add above Blazor WebAssembly URL (including the port number) into CORS policy in Program.cs `FinanceTrackerAPI/Program.cs` file of the `FinanceTrackerAPI`
 
@@ -66,7 +68,12 @@ The application follows a standard three-tier architecture:
 * This is a basic demo application and does not include user authentication or authorization.
 * Error handling is basic and primarily focuses on HTTP status codes and simple alerts.
 * Data validation is primarily done using Data Annotations.
-* For simplicity, we are loading all data for the dashboard summary. In a real application, this would likely be optimized.
+* For simplicity, I'm loading all data for the dashboard summary. In a real application, this would likely be optimized.
+* Since it's a simple app I have ommited Data oroented Design Patterns like `Repository Design Pattern` and `Unit of Work` principles. 
+* Used manual data binding instead of `Auto Mapper` 
+* Not included individual custom Exceptions to maintain simplicity
+* Logs are not added or exported 
+* Deployment, service dependencies not included- No needed here.
 
 ## Code Quality
 
