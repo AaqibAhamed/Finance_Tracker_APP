@@ -8,10 +8,12 @@ This is a simple personal finance tracker application built as a full-stack solu
 
 * **Frontend:** Blazor WebAssembly (.NET 8)
     * Reasoning: Enables building interactive web UIs using C# instead of JavaScript, leveraging existing .NET skills. Blazor WebAssembly allows for client-side execution, providing a responsive user experience.
+    * Since if we developed ASP.NET Core REST APIs it's best to create standalone client side Blazor WASM App
 * **UI Library:** MudBlazor
     * Reasoning: A comprehensive and well-documented UI component library for Blazor, offering a rich set of pre-built components that follow Material Design principles. This accelerates UI development and provides a clean, modern look and feel with built-in responsiveness.
 * **Backend:** ASP.NET Core Web API (.NET 8)
     * Reasoning: A robust and scalable framework for building RESTful APIs using C#. It integrates well with Entity Framework Core and provides excellent performance.
+    * We can simply connect with any client without more configurations.
 * **ORM:** Entity Framework Core (EF Core)
     * Reasoning: A modern object-relational mapper for .NET, simplifying database interactions by allowing developers to work with .NET objects instead of raw SQL.
 * **Database:** SQLite
