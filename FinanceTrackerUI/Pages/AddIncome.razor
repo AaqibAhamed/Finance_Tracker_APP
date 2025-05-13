@@ -14,12 +14,17 @@
             </CardHeaderContent>
         </MudCardHeader>
         <MudCardContent>
-            <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true" RequiredError="Description is required." For="@(() => incomeModel.Description)" />
-            <MudNumericField T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true" RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2" For="@(() => incomeModel.Amount)" Class="mt-3" />
-            <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required." MaxDate="@DateTime.Now.Date" For="@(() => incomeModel.Date)" Class="mt-3" />
+            <MudTextField @bind-Value="incomeModel.Description" Label="Description" Required="true"
+                RequiredError="Description is required." For="@(() => incomeModel.Description)" />
+            <MudNumericField T="decimal" @bind-Value="incomeModel.Amount" Label="Amount" Required="true"
+                RequiredError="Amount is required and must be positive." Min="0.01m" Format="N2"
+                For="@(() => incomeModel.Amount)" Class="mt-3" />
+            <MudDatePicker @bind-Date="incomeModel.Date" Label="Date" Required="true" RequiredError="Date is required."
+                MaxDate="@DateTime.Now.Date" For="@(() => incomeModel.Date)" Class="mt-3" />
         </MudCardContent>
         <MudCardActions Class="pa-4">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveIncome" Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveIncome"
+                Disabled="@(_isSaving || !_formIsValid)" Class="ml-auto">
                 @if (_isSaving)
                 {
                     <MudProgressCircular Indeterminate="true" Size="Size.Small" Class="mr-2" />
@@ -30,6 +35,10 @@
                     <span>Save Income</span>
                 }
             </MudButton>
+
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel" Disabled="@_isSaving" Class="ml-2">Cancel / Back
+            </MudButton>
+
         </MudCardActions>
     </MudForm>
 </MudCard>
@@ -66,12 +75,12 @@
                     await _form.ResetAsync(); // Reset form validation state
                 }
                 else
-                {   
+                {
                     Snackbar.Add($"Failed to add income. Status: {response.StatusCode}", Severity.Error);
                 }
             }
             catch (Exception ex)
-            {              
+            {
                 Snackbar.Add("An error occurred while saving the income.", Severity.Error);
             }
             finally
@@ -79,6 +88,11 @@
                 _isSaving = false;
                 StateHasChanged(); // Update UI to remove loading state
             }
-         }
-     }
- }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

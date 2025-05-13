@@ -35,6 +35,8 @@
                     <span>Save Expense</span>
                 }
             </MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel" Disabled="@_isSaving" Class="ml-2">Cancel / Back
+            </MudButton>
         </MudCardActions>
     </MudForm>
 </MudCard>
@@ -85,5 +87,10 @@
                 StateHasChanged(); // Update UI to remove loading state
             }
         }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }
